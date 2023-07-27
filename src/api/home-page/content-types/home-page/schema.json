@@ -33,6 +33,12 @@
       "type": "component",
       "repeatable": false,
       "component": "layout.featured-course"
+    },
+    "postsSelection": {
+      "displayName": "postsSelection",
+      "type": "component",
+      "repeatable": false,
+      "component": "blog.posts-selection"
     }
   }
 }
