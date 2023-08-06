@@ -21,21 +21,20 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
 
   // Method 2: Wrapping a core action (leaves core logic in place)
   async find(ctx) {
-    // some custom logic here
-    ctx.query = { ...ctx.query, local: "en" }; // add more query /api/posts?publicationState=preview&local=en
-    console.log(ctx.query);
-    /**
-     * {publicationState: "preview"}
-     * {publicationState: "preview", local: "en"}
-     */
-
-    // Calling the default core action
+    // 1. Premium posts solution 1: the worst because you need more logic in your controller, we need avoid this approach
+    // fetch all posts (including premium posts)
     const { data, meta } = await super.find(ctx);
 
-    // some more custom logic
-    meta.date = Date.now();
+    if (ctx.state.user) {
+      return { data, meta };
+    }
 
-    return { data, meta };
+    // Not authenticated
+    const filteredData = data.filter((post) => {
+      return !post.attributes.premium;
+    }); // filter preferably in the service and making big query for public request without premium posts
+
+    return { data: filteredData, meta };
   },
 
   // Method 3: Replacing a core action with proper sanitization
