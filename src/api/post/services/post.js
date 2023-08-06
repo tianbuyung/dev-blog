@@ -18,4 +18,17 @@ module.exports = createCoreService("api::post.post", ({ strapi }) => ({
 
     return response;
   },
+
+  // Method 2: Wrapping a core service (leaves core logic in place)
+  async find(...args) {
+    // Calling the default core controller
+    const { results, pagination } = await super.find(...args);
+
+    // some custom logic
+    results.forEach((result, index) => {
+      result.counter = index + 1;
+    });
+
+    return { results, pagination };
+  },
 }));
