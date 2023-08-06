@@ -47,7 +47,7 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
     const { query } = ctx;
 
     const entity = await strapi.service("api::post.post").findOne(id, query);
-    // console.log(entity);
+    console.log(entity);
     const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
     // console.log(sanitizedEntity);
 
