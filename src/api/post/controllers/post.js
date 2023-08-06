@@ -9,6 +9,9 @@ const { createCoreController } = require("@strapi/strapi").factories;
 module.exports = createCoreController("api::post.post", ({ strapi }) => ({
   // Method 1: Creating an entirely custom action
   async exampleAction(ctx) {
+    await strapi
+      .service("api::post.post")
+      .exampleService({ myParam: "example" });
     try {
       ctx.body = "ok";
     } catch (err) {
