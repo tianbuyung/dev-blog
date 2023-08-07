@@ -37,31 +37,51 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
   //   return { data: filteredData, meta };
   // },
 
-  // 2. Premium posts solution 2: rewrite the action to fetch only needed posts
+  // // 2. Premium posts solution 2: rewrite the action to fetch only needed posts
+  // async find(ctx) {
+  //   // if the request is authenticated
+  //   const isRequestingNonPremium =
+  //     ctx.query.filters && ctx.query.filters.premium["eq"] === false;
+
+  //   if (ctx.state.user || isRequestingNonPremium) {
+  //     const { data, meta } = await super.find(ctx);
+  //     return { data, meta };
+  //   }
+
+  //   // if the request is not authenticated (public request)
+  //   // let's call the underlying service with an additional filter param: premium === false
+  //   // /posts?filters[premium]=false
+  //   const { query } = ctx;
+
+  //   const filteredPosts = await strapi.service("api::post.post").find({
+  //     ...query,
+  //     filters: {
+  //       ...query.filters,
+  //       premium: false,
+  //     },
+  //   });
+
+  //   const sanitizedPosts = await this.sanitizeOutput(filteredPosts, ctx);
+
+  //   return this.transformResponse(sanitizedPosts);
+  // },
+
+  // 3. Premium posts solution 3: the best approach with create custom service
   async find(ctx) {
     // if the request is authenticated
     const isRequestingNonPremium =
       ctx.query.filters && ctx.query.filters.premium["eq"] === false;
-
     if (ctx.state.user || isRequestingNonPremium) {
       const { data, meta } = await super.find(ctx);
       return { data, meta };
     }
 
     // if the request is not authenticated (public request)
-    // let's call the underlying service with an additional filter param: premium === false
-    // /posts?filters[premium]=false
-    const { query } = ctx;
+    const publicPosts = await strapi
+      .service("api::post.post")
+      .findPublic(ctx.query);
 
-    const filteredPosts = await strapi.service("api::post.post").find({
-      ...query,
-      filters: {
-        ...query.filters,
-        premium: false,
-      },
-    });
-
-    const sanitizedPosts = await this.sanitizeOutput(filteredPosts, ctx);
+    const sanitizedPosts = await this.sanitizeOutput(publicPosts, ctx);
 
     return this.transformResponse(sanitizedPosts);
   },
