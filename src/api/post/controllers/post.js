@@ -87,18 +87,38 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
   },
 
   // Method 3: Replacing a core action with proper sanitization
+  // async findOne(ctx) {
+  //   // /api/posts/:id?
+  //   // console.log(ctx.params);
+  //   // console.log(ctx.query);
+  //   const { id } = ctx.params;
+  //   const { query } = ctx;
+
+  //   const entity = await strapi.service("api::post.post").findOne(id, query);
+  //   console.log(entity);
+  //   const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
+  //   // console.log(sanitizedEntity);
+
+  //   return this.transformResponse(sanitizedEntity);
+  // },
+  // Premium post the findOne controller
   async findOne(ctx) {
-    // /api/posts/:id?
-    // console.log(ctx.params);
-    // console.log(ctx.query);
-    const { id } = ctx.params;
+    // for authenticated users
+    if (ctx.state.user) {
+      const { data, meta } = await super.findOne(ctx);
+      return { data, meta };
+    }
+
+    // for public users
+    const { id } = ctx.params; // /api/posts/:id
     const { query } = ctx;
 
-    const entity = await strapi.service("api::post.post").findOne(id, query);
-    console.log(entity);
-    const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-    // console.log(sanitizedEntity);
+    const postIfPublic = await strapi
+      .service("api::post.post")
+      .findOneIfPublic({ id, query });
 
-    return this.transformResponse(sanitizedEntity);
+    const sanitizedPost = await this.sanitizeOutput(postIfPublic, ctx);
+
+    return this.transformResponse(sanitizedPost);
   },
 }));
