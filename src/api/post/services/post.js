@@ -19,6 +19,35 @@ module.exports = createCoreService("api::post.post", ({ strapi }) => ({
     return response;
   },
 
+  async findPublic(args) {
+    const newQuery = {
+      ...args,
+      filters: {
+        ...args.filters,
+        premium: false,
+      },
+    };
+
+    const publicPosts = await strapi.entityService.findMany(
+      "api::post.post",
+      this.getFetchParams(newQuery)
+    );
+
+    return publicPosts;
+  },
+
+  async findOneIfPublic(args) {
+    const { id, query } = args;
+
+    const post = await strapi.entityService.findOne(
+      "api::post.post",
+      id,
+      this.getFetchParams(query)
+    );
+
+    return !post?.premium ? post : null;
+  },
+
   // Method 2: Wrapping a core service (leaves core logic in place)
   async find(...args) {
     // Calling the default core controller

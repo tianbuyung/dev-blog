@@ -20,37 +20,105 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
   },
 
   // Method 2: Wrapping a core action (leaves core logic in place)
+  // async find(ctx) {
+  //   // 1. Premium posts solution 1: the simple but the worst because you need more logic in your controller, we need avoid this approach
+  //   // fetch all posts (including premium posts)
+  //   const { data, meta } = await super.find(ctx);
+
+  //   if (ctx.state.user) {
+  //     return { data, meta };
+  //   }
+
+  //   // Not authenticated
+  //   const filteredData = data.filter((post) => {
+  //     return !post.attributes.premium;
+  //   }); // filter preferably in the service and making big query for public request without premium posts
+
+  //   return { data: filteredData, meta };
+  // },
+
+  // // 2. Premium posts solution 2: rewrite the action to fetch only needed posts
+  // async find(ctx) {
+  //   // if the request is authenticated
+  //   const isRequestingNonPremium =
+  //     ctx.query.filters && ctx.query.filters.premium["eq"] === false;
+
+  //   if (ctx.state.user || isRequestingNonPremium) {
+  //     const { data, meta } = await super.find(ctx);
+  //     return { data, meta };
+  //   }
+
+  //   // if the request is not authenticated (public request)
+  //   // let's call the underlying service with an additional filter param: premium === false
+  //   // /posts?filters[premium]=false
+  //   const { query } = ctx;
+
+  //   const filteredPosts = await strapi.service("api::post.post").find({
+  //     ...query,
+  //     filters: {
+  //       ...query.filters,
+  //       premium: false,
+  //     },
+  //   });
+
+  //   const sanitizedPosts = await this.sanitizeOutput(filteredPosts, ctx);
+
+  //   return this.transformResponse(sanitizedPosts);
+  // },
+
+  // 3. Premium posts solution 3: the best approach with create custom service
   async find(ctx) {
-    // some custom logic here
-    ctx.query = { ...ctx.query, local: "en" }; // add more query /api/posts?publicationState=preview&local=en
-    console.log(ctx.query);
-    /**
-     * {publicationState: "preview"}
-     * {publicationState: "preview", local: "en"}
-     */
+    // if the request is authenticated
+    const isRequestingNonPremium =
+      ctx.query.filters && ctx.query.filters.premium["eq"] === false;
+    if (ctx.state.user || isRequestingNonPremium) {
+      const { data, meta } = await super.find(ctx);
+      return { data, meta };
+    }
 
-    // Calling the default core action
-    const { data, meta } = await super.find(ctx);
+    // if the request is not authenticated (public request)
+    const publicPosts = await strapi
+      .service("api::post.post")
+      .findPublic(ctx.query);
 
-    // some more custom logic
-    meta.date = Date.now();
+    const sanitizedPosts = await this.sanitizeOutput(publicPosts, ctx);
 
-    return { data, meta };
+    return this.transformResponse(sanitizedPosts);
   },
 
   // Method 3: Replacing a core action with proper sanitization
+  // async findOne(ctx) {
+  //   // /api/posts/:id?
+  //   // console.log(ctx.params);
+  //   // console.log(ctx.query);
+  //   const { id } = ctx.params;
+  //   const { query } = ctx;
+
+  //   const entity = await strapi.service("api::post.post").findOne(id, query);
+  //   console.log(entity);
+  //   const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
+  //   // console.log(sanitizedEntity);
+
+  //   return this.transformResponse(sanitizedEntity);
+  // },
+  // Premium post the findOne controller
   async findOne(ctx) {
-    // /api/posts/:id?
-    // console.log(ctx.params);
-    // console.log(ctx.query);
-    const { id } = ctx.params;
+    // for authenticated users
+    if (ctx.state.user) {
+      const { data, meta } = await super.findOne(ctx);
+      return { data, meta };
+    }
+
+    // for public users
+    const { id } = ctx.params; // /api/posts/:id
     const { query } = ctx;
 
-    const entity = await strapi.service("api::post.post").findOne(id, query);
-    console.log(entity);
-    const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-    // console.log(sanitizedEntity);
+    const postIfPublic = await strapi
+      .service("api::post.post")
+      .findOneIfPublic({ id, query });
 
-    return this.transformResponse(sanitizedEntity);
+    const sanitizedPost = await this.sanitizeOutput(postIfPublic, ctx);
+
+    return this.transformResponse(sanitizedPost);
   },
 }));
