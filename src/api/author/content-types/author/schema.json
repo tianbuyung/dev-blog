@@ -26,7 +26,7 @@
     },
     "username": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "admin_user": {
       "type": "relation",
