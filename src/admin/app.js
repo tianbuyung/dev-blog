@@ -1,5 +1,7 @@
 import NewLogo from "./extensions/223.jpg";
 
+const myPrimaryColor = "#007bff";
+
 const config = {
   locales: ["id", "it"],
   // translations: {
@@ -21,6 +23,12 @@ const config = {
     favicon: NewLogo,
   },
   tutorials: false,
+  theme: {
+    colors: {
+      buttonPrimary600: myPrimaryColor,
+      primary600: myPrimaryColor,
+    },
+  },
 };
 
 const bootstrap = (app) => {
