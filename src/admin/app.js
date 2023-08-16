@@ -1,3 +1,5 @@
+import NewLogo from "./extensions/223.jpg";
+
 const config = {
   locales: ["id", "it"],
   // translations: {
@@ -9,6 +11,16 @@ const config = {
   //     "app.components.LeftMenuLinkContainer.installNewPlugin": "Negozio",
   //   },
   // },
+  auth: {
+    logo: NewLogo,
+  },
+  menu: {
+    logo: NewLogo,
+  },
+  head: {
+    favicon: NewLogo,
+  },
+  tutorials: false,
 };
 
 const bootstrap = (app) => {
