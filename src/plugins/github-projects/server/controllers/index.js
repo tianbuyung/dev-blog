@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const myController = require('./my-controller');
+const getRepositoriesController = require("./get-repositories-controller");
 
 module.exports = {
-  myController,
+  getRepositoriesController,
 };
