@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = ({ strapi }) => ({
-  index(ctx) {
-    ctx.body = strapi
+  index: async (ctx) => {
+    ctx.body = await strapi
       .plugin("github-projects")
       .service("getRepositoriesService")
       .getPublicRepositories();
