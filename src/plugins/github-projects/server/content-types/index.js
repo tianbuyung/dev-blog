@@ -1,3 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = {};
+const projectSchema = require("./project-schema");
+
+module.exports = {
+  project: { schema: projectSchema },
+};
