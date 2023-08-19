@@ -1,7 +1,7 @@
 "use strict";
 const { request } = require("@octokit/request");
-// or: import { request } from "@octokit/request";
 const axios = require("axios");
+const md = require("markdown-it")();
 
 module.exports = ({ strapi }) => ({
   getProjectForRepository: async (repository) => {
@@ -51,12 +51,16 @@ module.exports = ({ strapi }) => ({
           console.log("Error fetching ", readmeUrl);
         }
 
+        const longDescription = md
+          .render(readmeResponse || "")
+          .replaceAll("\n", "<br/>");
+
         const repositories = {
           id,
           name,
           shortDescription: description,
           url: html_url,
-          longDescription: readmeResponse || "",
+          longDescription,
         };
 
         // Add some logic to search for an existing project for the current repository.
