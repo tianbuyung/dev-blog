@@ -23,6 +23,7 @@ const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(undefined);
+  const [selectedRepos, setSelectedRepos] = useState([]);
 
   const COL_COUNT = 5;
   const ROW_COUNT = repos.length;
@@ -56,13 +57,25 @@ const Repo = () => {
   // we do have some repos
   console.log(repos);
 
+  const allChecked = selectedRepos.length === repos.length;
+  const isIndeterminate = selectedRepos.length > 0 && !allChecked; // some repos selected, but not all
+
   return (
     <Box padding={8} background="neutral100">
       <Table colCount={COL_COUNT} rowCount={ROW_COUNT}>
         <Thead>
           <Tr>
             <Th>
-              <BaseCheckbox aria-label="Select all entries" />
+              <BaseCheckbox
+                aria-label="Select all entries"
+                value={allChecked}
+                indeterminate={isIndeterminate}
+                onValueChange={(value) =>
+                  value
+                    ? setSelectedRepos(repos.map((repo) => repo.id))
+                    : setSelectedRepos([])
+                }
+              />
             </Th>
             <Th>
               <Typography variant="sigma">Name</Typography>
@@ -84,7 +97,16 @@ const Repo = () => {
             return (
               <Tr key={id}>
                 <Td>
-                  <BaseCheckbox aria-label={`Select ${id}`} />
+                  <BaseCheckbox
+                    aria-label={`Select ${id}`}
+                    value={selectedRepos && selectedRepos.includes(id)}
+                    onValueChange={(value) => {
+                      const newSelectedRepos = value
+                        ? [...selectedRepos, id]
+                        : selectedRepos.filter((item) => item !== id);
+                      setSelectedRepos(newSelectedRepos);
+                    }}
+                  />
                 </Td>
                 <Td>
                   <Typography textColor="neutral800">{name}</Typography>
