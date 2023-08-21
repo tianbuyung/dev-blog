@@ -12,16 +12,20 @@ import {
   VisuallyHidden,
   Loader,
   Alert,
+  Link,
+  Flex,
+  IconButton,
 } from "@strapi/design-system";
 import { useFetchClient } from "@strapi/helper-plugin";
-
-const COL_COUNT = 5;
-const ROW_COUNT = 6;
+import { Pencil, Trash } from "@strapi/icons";
 
 const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(undefined);
+
+  const COL_COUNT = 5;
+  const ROW_COUNT = repos.length;
 
   const client = useFetchClient();
   console.log("Initialized client");
@@ -74,6 +78,51 @@ const Repo = () => {
             </Th>
           </Tr>
         </Thead>
+        <Tbody>
+          {repos.map((repo) => {
+            const { id, name, shortDescription, url, projectId } = repo;
+            return (
+              <Tr key={id}>
+                <Td>
+                  <BaseCheckbox aria-label={`Select ${id}`} />
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{name}</Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">
+                    {shortDescription}
+                  </Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">
+                    <Link href={url} isExternal>
+                      {url}
+                    </Link>
+                  </Typography>
+                </Td>
+                <Td>
+                  <Flex>
+                    <IconButton
+                      onClick={() => console.log("edit")}
+                      label="Edit"
+                      noBorder
+                      icon={<Pencil />}
+                    />
+                    <Box paddingLeft={1}>
+                      <IconButton
+                        onClick={() => console.log("delete")}
+                        label="Delete"
+                        noBorder
+                        icon={<Trash />}
+                      />
+                    </Box>
+                  </Flex>
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
       </Table>
     </Box>
   );
