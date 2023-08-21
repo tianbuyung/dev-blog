@@ -17,7 +17,7 @@ import {
   IconButton,
 } from "@strapi/design-system";
 import { useFetchClient } from "@strapi/helper-plugin";
-import { Pencil, Trash } from "@strapi/icons";
+import { Pencil, Plus, Trash } from "@strapi/icons";
 
 const Repo = () => {
   const [repos, setRepos] = useState([]);
@@ -102,22 +102,31 @@ const Repo = () => {
                   </Typography>
                 </Td>
                 <Td>
-                  <Flex>
-                    <IconButton
-                      onClick={() => console.log("edit")}
-                      label="Edit"
-                      noBorder
-                      icon={<Pencil />}
-                    />
-                    <Box paddingLeft={1}>
+                  {projectId ? (
+                    <Flex>
                       <IconButton
-                        onClick={() => console.log("delete")}
-                        label="Delete"
+                        onClick={() => console.log("edit")}
+                        label="Edit"
                         noBorder
-                        icon={<Trash />}
+                        icon={<Pencil />}
                       />
-                    </Box>
-                  </Flex>
+                      <Box paddingLeft={1}>
+                        <IconButton
+                          onClick={() => console.log("delete")}
+                          label="Delete"
+                          noBorder
+                          icon={<Trash />}
+                        />
+                      </Box>
+                    </Flex>
+                  ) : (
+                    <IconButton
+                      onClick={() => console.log("add")}
+                      label="Add"
+                      noBorder
+                      icon={<Plus />}
+                    />
+                  )}
                 </Td>
               </Tr>
             );
