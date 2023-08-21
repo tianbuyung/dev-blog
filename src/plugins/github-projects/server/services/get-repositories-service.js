@@ -24,7 +24,7 @@ module.exports = ({ strapi }) => ({
   getPublicRepositories: async () => {
     // Following GitHub docs formatting:
     // https://developer.github.com/v3/repos/#list-organization-repositories
-    const result = await request("GET /user/repos", {
+    const result = await request("GET /user/repos?per_page=100", {
       headers: {
         authorization: `token ${process.env.GITHUB_TOKEN}`,
       },

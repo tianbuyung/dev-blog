@@ -104,12 +104,16 @@ const Repo = () => {
                 <Td>
                   {projectId ? (
                     <Flex>
-                      <IconButton
-                        onClick={() => console.log("edit")}
-                        label="Edit"
-                        noBorder
-                        icon={<Pencil />}
-                      />
+                      <Link
+                        to={`/content-manager/collectionType/plugin::github-projects.project/${projectId}`}
+                      >
+                        <IconButton
+                          onClick={() => console.log("edit")}
+                          label="Edit"
+                          noBorder
+                          icon={<Pencil />}
+                        />
+                      </Link>
                       <Box paddingLeft={1}>
                         <IconButton
                           onClick={() => console.log("delete")}
