@@ -60,6 +60,11 @@ const Repo = () => {
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked; // some repos selected, but not all
 
+  const createProject = async (repo) => {
+    const response = await client.post("/github-projects/project", repo);
+    console.log(response);
+  };
+
   return (
     <Box padding={8} background="neutral100">
       <Table colCount={COL_COUNT} rowCount={ROW_COUNT}>
@@ -147,7 +152,7 @@ const Repo = () => {
                     </Flex>
                   ) : (
                     <IconButton
-                      onClick={() => console.log("add")}
+                      onClick={() => createProject(repo)}
                       label="Add"
                       noBorder
                       icon={<Plus />}
