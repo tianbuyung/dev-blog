@@ -22,8 +22,15 @@ import { Pencil, Plus, Trash } from "@strapi/icons";
 const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(undefined);
   const [selectedRepos, setSelectedRepos] = useState([]);
+  const [alert, setAlert] = useState(undefined);
+
+  const showAlert = (alert) => {
+    setAlert(alert);
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 5000);
+  };
 
   const COL_COUNT = 5;
   const ROW_COUNT = repos.length;
@@ -37,20 +44,15 @@ const Repo = () => {
     client
       .get("/github-projects/repositories")
       .then((response) => setRepos(response.data))
-      .catch((error) => setError(error));
+      .catch((error) =>
+        showAlert({
+          title: "Error fetching repositories",
+          message: error.toString(),
+          variant: "danger",
+        })
+      );
     setLoading(false);
   }, []);
-
-  if (error)
-    return (
-      <Alert
-        closeLabel="Close"
-        title="Error Fetching Repositories"
-        variant="danger"
-      >
-        {error.toString()}
-      </Alert>
-    );
 
   if (loading) return <Loader />;
 
@@ -63,10 +65,47 @@ const Repo = () => {
   const createProject = async (repo) => {
     const response = await client.post("/github-projects/project", repo);
     console.log(response);
+    if (response?.data) {
+      setRepos(
+        repos.map((item) =>
+          item.id !== repo.id
+            ? item
+            : {
+                ...item,
+                projectId: response.data.id,
+              }
+        )
+      );
+
+      showAlert({
+        title: "Project created",
+        message: `Successfully created project ${response.data.title}`,
+        variant: "success",
+      });
+    } else {
+      showAlert({
+        title: "An error occured",
+        message: error.toString(),
+        variant: "danger",
+      });
+    }
   };
 
   return (
     <Box padding={8} background="neutral100">
+      {alert && (
+        <Alert
+          closeLabel="Close"
+          title={alert.title}
+          variant={alert.variant}
+          onClose={() => {
+            setAlert(undefined);
+          }}
+          style={{ position: "absolute", top: 0, left: "14%", zIndex: 10 }}
+        >
+          {alert.message}
+        </Alert>
+      )}
       <Table colCount={COL_COUNT} rowCount={ROW_COUNT}>
         <Thead>
           <Tr>
