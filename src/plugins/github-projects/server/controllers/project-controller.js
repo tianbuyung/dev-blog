@@ -12,4 +12,14 @@ module.exports = ({ strapi }) => ({
 
     return newProject;
   },
+  delete: async (ctx) => {
+    const projectId = ctx.params.id;
+
+    const deletedProject = await strapi
+      .plugin("github-projects")
+      .service("projectService")
+      .delete(projectId);
+
+    return deletedProject;
+  },
 });

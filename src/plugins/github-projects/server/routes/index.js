@@ -16,4 +16,12 @@ module.exports = [
       policies: ["admin::isAuthenticatedAdmin"],
     },
   },
+  {
+    method: "DELETE",
+    path: "/project/:id",
+    handler: "projectController.delete",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"],
+    },
+  },
 ];

@@ -65,6 +65,7 @@ const Repo = () => {
   const createProject = async (repo) => {
     const response = await client.post("/github-projects/project", repo);
     console.log(response);
+
     if (response?.data) {
       setRepos(
         repos.map((item) =>
@@ -80,6 +81,37 @@ const Repo = () => {
       showAlert({
         title: "Project created",
         message: `Successfully created project ${response.data.title}`,
+        variant: "success",
+      });
+    } else {
+      showAlert({
+        title: "An error occured",
+        message: error.toString(),
+        variant: "danger",
+      });
+    }
+  };
+
+  const deleteProject = async (repo) => {
+    const { projectId } = repo;
+    const response = await client.del(`/github-projects/project/${projectId}`);
+    console.log(response);
+
+    if (response?.data) {
+      setRepos(
+        repos.map((item) =>
+          item.id !== repo.id
+            ? item
+            : {
+                ...item,
+                projectId: null,
+              }
+        )
+      );
+
+      showAlert({
+        title: "Project deleted",
+        message: `Successfully deleted project ${response.data.title}`,
         variant: "success",
       });
     } else {
@@ -182,7 +214,7 @@ const Repo = () => {
                       </Link>
                       <Box paddingLeft={1}>
                         <IconButton
-                          onClick={() => console.log("delete")}
+                          onClick={() => deleteProject(repo)}
                           label="Delete"
                           noBorder
                           icon={<Trash />}
