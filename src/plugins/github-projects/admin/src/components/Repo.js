@@ -18,12 +18,14 @@ import {
 } from "@strapi/design-system";
 import { useFetchClient } from "@strapi/helper-plugin";
 import { Pencil, Plus, Trash } from "@strapi/icons";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState([]);
   const [alert, setAlert] = useState(undefined);
+  const [deletingRepo, setDeletingRepo] = useState(undefined);
 
   const showAlert = (alert) => {
     setAlert(alert);
@@ -138,6 +140,7 @@ const Repo = () => {
           {alert.message}
         </Alert>
       )}
+
       <Table colCount={COL_COUNT} rowCount={ROW_COUNT}>
         <Thead>
           <Tr>
@@ -167,6 +170,7 @@ const Repo = () => {
             </Th>
           </Tr>
         </Thead>
+
         <Tbody>
           {repos.map((repo) => {
             const { id, name, shortDescription, url, projectId } = repo;
@@ -214,7 +218,7 @@ const Repo = () => {
                       </Link>
                       <Box paddingLeft={1}>
                         <IconButton
-                          onClick={() => deleteProject(repo)}
+                          onClick={() => setDeletingRepo(repo)}
                           label="Delete"
                           noBorder
                           icon={<Trash />}
@@ -235,6 +239,15 @@ const Repo = () => {
           })}
         </Tbody>
       </Table>
+
+      {deletingRepo && (
+        <ConfirmationDialog
+          visible={!!deletingRepo}
+          message="Are you sure you want to delete this project?"
+          onClose={() => setDeletingRepo(undefined)}
+          onConfirm={() => deleteProject(deletingRepo)}
+        />
+      )}
     </Box>
   );
 };
