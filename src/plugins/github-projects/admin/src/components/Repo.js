@@ -19,6 +19,7 @@ import {
 import { useFetchClient } from "@strapi/helper-plugin";
 import { Pencil, Plus, Trash } from "@strapi/icons";
 import ConfirmationDialog from "./ConfirmationDialog";
+import BulkActions from "./BulkActions";
 
 const Repo = () => {
   const [repos, setRepos] = useState([]);
@@ -139,6 +140,14 @@ const Repo = () => {
         >
           {alert.message}
         </Alert>
+      )}
+
+      {selectedRepos.length > 0 && (
+        <BulkActions
+          selectedRepos={selectedRepos.map((repoId) =>
+            repos.find((repo) => repo.id == repoId)
+          )}
+        />
       )}
 
       <Table colCount={COL_COUNT} rowCount={ROW_COUNT}>
