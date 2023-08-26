@@ -48,6 +48,33 @@ module.exports = createCoreService("api::post.post", ({ strapi }) => ({
     return !post?.premium ? post : null;
   },
 
+  async likePost(args) {
+    const { postId, userId, query } = args;
+
+    // use the underlying entity service API to fetch the post and in particular, it's likedBy property
+    const postToLike = await strapi.entityService.findOne(
+      "api::post.post",
+      postId,
+      {
+        populate: ["likedBy"],
+      }
+    );
+
+    // use the underlying entity service API to update the current post with the new relation
+    const updatedPost = await strapi.entityService.update(
+      "api::post.post",
+      postId,
+      {
+        data: {
+          likedBy: [...postToLike.likedBy, userId],
+        },
+        ...query,
+      }
+    );
+
+    return updatedPost;
+  },
+
   // Method 2: Wrapping a core service (leaves core logic in place)
   async find(...args) {
     // Calling the default core controller

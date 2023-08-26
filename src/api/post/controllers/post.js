@@ -121,4 +121,26 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
 
     return this.transformResponse(sanitizedPost);
   },
+
+  // like a post controller
+  async likePost(ctx) {
+    // unauthenticated users can't like posts and we can use strapi built in setting permissions
+    // if (!ctx.state.user) {
+    //   return ctx.forbidden("Only authenticated user can like post", {
+    //     message: "please register",
+    //   }); // throw custom error from strapi first argument is message, second argument is error details object
+    // }
+
+    const user = ctx.state.user; // user trying to like a post
+    const postId = ctx.params.id; // the post that's being "liked"
+    const { query } = ctx;
+
+    const updatedPost = await strapi
+      .service("api::post.post")
+      .likePost({ userId: user.id, postId, query });
+
+    const sanitizedPost = await this.sanitizeOutput(updatedPost, ctx);
+
+    return this.transformResponse(sanitizedPost);
+  },
 }));
