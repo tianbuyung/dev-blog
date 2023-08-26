@@ -19,6 +19,7 @@ module.exports = ({ strapi }) => ({
 
     return newProject;
   },
+
   delete: async (projectId) => {
     const deletedProject = await strapi.entityService.delete(
       "plugin::github-projects.project",
@@ -26,5 +27,17 @@ module.exports = ({ strapi }) => ({
     );
 
     return deletedProject;
+  },
+
+  createAll: async (repos, userId) => {
+    const createPromises = repos.map(
+      async (repo) =>
+        await strapi
+          .plugin("github-projects")
+          .service("projectService")
+          .create(repo, userId)
+    );
+
+    return Promise.all(createPromises);
   },
 });

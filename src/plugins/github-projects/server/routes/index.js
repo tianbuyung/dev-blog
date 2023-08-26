@@ -8,6 +8,7 @@ module.exports = [
       // auth: false, // temporarily disabled and TODO: change this authorized only for admin panel users
     },
   },
+
   {
     method: "POST",
     path: "/project",
@@ -16,10 +17,20 @@ module.exports = [
       policies: ["admin::isAuthenticatedAdmin"],
     },
   },
+
   {
     method: "DELETE",
     path: "/project/:id",
     handler: "projectController.delete",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"],
+    },
+  },
+
+  {
+    method: "POST",
+    path: "/projects",
+    handler: "projectController.createAll",
     config: {
       policies: ["admin::isAuthenticatedAdmin"],
     },
