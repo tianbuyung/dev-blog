@@ -162,6 +162,43 @@ const Repo = () => {
       .finally(() => setSelectedRepos([]));
   };
 
+  const deleteAll = (projectIds) => {
+    client
+      .del("/github-projects/projects", {
+        params: {
+          projectIds,
+        },
+      })
+      .then((response) => {
+        setRepos(
+          repos.map((repo) => {
+            const relatedProjectJustDeleted = response.data.find(
+              (project) => project.repositoryId == repo.id
+            );
+            return repo.projectId && relatedProjectJustDeleted
+              ? {
+                  ...repo,
+                  projectId: null,
+                }
+              : repo;
+          })
+        );
+        showAlert({
+          title: "Projects deleted",
+          message: `Successfully deleted ${response.data.length} projects`,
+          variant: "success",
+        });
+      })
+      .catch((error) => {
+        showAlert({
+          title: "An error occured",
+          message: error.toString(),
+          variant: "danger",
+        });
+      })
+      .finally(() => setSelectedRepos([]));
+  };
+
   return (
     <Box padding={8} background="neutral100">
       {alert && (
@@ -184,6 +221,7 @@ const Repo = () => {
             repos.find((repo) => repo.id == repoId)
           )}
           bulkCreateAction={createAll}
+          bulkDeleteAction={deleteAll}
         />
       )}
 
