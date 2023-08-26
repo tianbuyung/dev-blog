@@ -9,7 +9,6 @@ import {
   Box,
   BaseCheckbox,
   Typography,
-  VisuallyHidden,
   Loader,
   Alert,
   Link,
@@ -20,6 +19,8 @@ import { useFetchClient } from "@strapi/helper-plugin";
 import { Pencil, Plus, Trash } from "@strapi/icons";
 import ConfirmationDialog from "./ConfirmationDialog";
 import BulkActions from "./BulkActions";
+import { useIntl } from "react-intl";
+import getTrad from "../utils/getTrad";
 
 const Repo = () => {
   const [repos, setRepos] = useState([]);
@@ -27,6 +28,7 @@ const Repo = () => {
   const [selectedRepos, setSelectedRepos] = useState([]);
   const [alert, setAlert] = useState(undefined);
   const [deletingRepo, setDeletingRepo] = useState(undefined);
+  const { formatMessage } = useIntl();
 
   const showAlert = (alert) => {
     setAlert(alert);
@@ -244,16 +246,36 @@ const Repo = () => {
               />
             </Th>
             <Th>
-              <Typography variant="sigma">Name</Typography>
+              <Typography variant="sigma">
+                {formatMessage({
+                  id: getTrad("repo.name"),
+                  defaultMessage: "Name",
+                })}
+              </Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">Description</Typography>
+              <Typography variant="sigma">
+                {formatMessage({
+                  id: getTrad("repo.description"),
+                  defaultMessage: "Description",
+                })}
+              </Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">Url</Typography>
+              <Typography variant="sigma">
+                {formatMessage({
+                  id: getTrad("repo.url"),
+                  defaultMessage: "Url",
+                })}
+              </Typography>
             </Th>
             <Th>
-              <VisuallyHidden>Actions</VisuallyHidden>
+              <Typography variant="sigma">
+                {formatMessage({
+                  id: getTrad("repo.actions"),
+                  defaultMessage: "Actions",
+                })}
+              </Typography>
             </Th>
           </Tr>
         </Thead>
