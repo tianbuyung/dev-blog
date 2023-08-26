@@ -4,7 +4,18 @@ module.exports = [
     path: "/repositories", // localhost:1337/github-projects/repositories
     handler: "getRepositoriesController.index",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
+      policies: [
+        "admin::isAuthenticatedAdmin",
+        {
+          name: "admin::hasPermissions",
+          config: {
+            actions: [
+              "plugin::github-projects.repositories.read",
+              "plugin::github-projects.projects.read",
+            ],
+          },
+        },
+      ],
       // auth: false, // temporarily disabled and TODO: change this authorized only for admin panel users
     },
   },
@@ -14,7 +25,15 @@ module.exports = [
     path: "/project",
     handler: "projectController.create",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
+      policies: [
+        "admin::isAuthenticatedAdmin",
+        {
+          name: "admin::hasPermissions",
+          config: {
+            actions: ["plugin::github-projects.projects.create"],
+          },
+        },
+      ],
     },
   },
 
@@ -23,7 +42,15 @@ module.exports = [
     path: "/project/:id",
     handler: "projectController.delete",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
+      policies: [
+        "admin::isAuthenticatedAdmin",
+        {
+          name: "admin::hasPermissions",
+          config: {
+            actions: ["plugin::github-projects.projects.delete"],
+          },
+        },
+      ],
     },
   },
 
@@ -32,7 +59,15 @@ module.exports = [
     path: "/projects",
     handler: "projectController.createAll",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
+      policies: [
+        "admin::isAuthenticatedAdmin",
+        {
+          name: "admin::hasPermissions",
+          config: {
+            actions: ["plugin::github-projects.projects.create"],
+          },
+        },
+      ],
     },
   },
 
@@ -41,7 +76,15 @@ module.exports = [
     path: "/projects",
     handler: "projectController.deleteAll",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
+      policies: [
+        "admin::isAuthenticatedAdmin",
+        {
+          name: "admin::hasPermissions",
+          config: {
+            actions: ["plugin::github-projects.projects.delete"],
+          },
+        },
+      ],
     },
   },
 ];
