@@ -40,4 +40,15 @@ module.exports = ({ strapi }) => ({
 
     return Promise.all(createPromises);
   },
+
+  deleteAll: async (projectIds) => {
+    const deletePromises = projectIds.map(
+      async (id) =>
+        await strapi
+          .plugin("github-projects")
+          .service("projectService")
+          .delete(id)
+    );
+    return Promise.all(deletePromises);
+  },
 });
