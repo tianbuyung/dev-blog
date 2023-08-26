@@ -51,4 +51,19 @@ module.exports = ({ strapi }) => ({
     );
     return Promise.all(deletePromises);
   },
+
+  find: async (params) => {
+    return strapi.entityService.findMany(
+      "plugin::github-projects.project",
+      params
+    );
+  },
+
+  findOne: async (projectId, params) => {
+    return strapi.entityService.findOne(
+      "plugin::github-projects.project",
+      projectId,
+      params
+    );
+  },
 });
