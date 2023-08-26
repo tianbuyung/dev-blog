@@ -126,6 +126,42 @@ const Repo = () => {
     }
   };
 
+  const createAll = (reposToBecomeProjects) => {
+    client
+      .post("/github-projects/projects", {
+        repos: reposToBecomeProjects,
+      })
+      .then((response) => {
+        setRepos(
+          repos.map((repo) => {
+            //TODO: check if it needs conversion
+            const relatedProjectJustCreated = response.data.find(
+              (project) => project.repositoryId == repo.id
+            );
+            return !repo.projectId && relatedProjectJustCreated
+              ? {
+                  ...repo,
+                  projectId: relatedProjectJustCreated.id,
+                }
+              : repo;
+          })
+        );
+        showAlert({
+          title: "Projects created",
+          message: `Successfully created ${response.data.length} projects`,
+          variant: "success",
+        });
+      })
+      .catch((error) => {
+        showAlert({
+          title: "An error occured",
+          message: error.toString(),
+          variant: "danger",
+        });
+      })
+      .finally(() => setSelectedRepos([]));
+  };
+
   return (
     <Box padding={8} background="neutral100">
       {alert && (
@@ -147,6 +183,7 @@ const Repo = () => {
           selectedRepos={selectedRepos.map((repoId) =>
             repos.find((repo) => repo.id == repoId)
           )}
+          bulkCreateAction={createAll}
         />
       )}
 
