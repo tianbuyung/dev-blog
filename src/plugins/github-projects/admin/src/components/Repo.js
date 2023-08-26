@@ -65,65 +65,66 @@ const Repo = () => {
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked; // some repos selected, but not all
 
-  const createProject = async (repo) => {
-    const response = await client.post("/github-projects/project", repo);
-    console.log(response);
+  const createProject = (repo) => {
+    client
+      .post("/github-projects/project", repo)
+      .then((response) => {
+        setRepos(
+          repos.map((item) =>
+            item.id !== repo.id
+              ? item
+              : {
+                  ...item,
+                  projectId: response.data.id,
+                }
+          )
+        );
 
-    if (response?.data) {
-      setRepos(
-        repos.map((item) =>
-          item.id !== repo.id
-            ? item
-            : {
-                ...item,
-                projectId: response.data.id,
-              }
-        )
-      );
-
-      showAlert({
-        title: "Project created",
-        message: `Successfully created project ${response.data.title}`,
-        variant: "success",
+        showAlert({
+          title: "Project created",
+          message: `Successfully created project ${response.data.title}`,
+          variant: "success",
+        });
+      })
+      .catch((error) => {
+        showAlert({
+          title: "An error occured",
+          message: error.toString(),
+          variant: "danger",
+        });
       });
-    } else {
-      showAlert({
-        title: "An error occured",
-        message: error.toString(),
-        variant: "danger",
-      });
-    }
   };
 
-  const deleteProject = async (repo) => {
+  const deleteProject = (repo) => {
     const { projectId } = repo;
-    const response = await client.del(`/github-projects/project/${projectId}`);
-    console.log(response);
 
-    if (response?.data) {
-      setRepos(
-        repos.map((item) =>
-          item.id !== repo.id
-            ? item
-            : {
-                ...item,
-                projectId: null,
-              }
-        )
-      );
+    client
+      .del(`/github-projects/project/${projectId}`)
+      .then((response) => {
+        setRepos(
+          repos.map((item) =>
+            item.id !== repo.id
+              ? item
+              : {
+                  ...item,
+                  projectId: null,
+                }
+          )
+        );
 
-      showAlert({
-        title: "Project deleted",
-        message: `Successfully deleted project ${response.data.title}`,
-        variant: "success",
+        showAlert({
+          title: "Project deleted",
+          message: `Successfully deleted project ${response.data.title}`,
+          variant: "success",
+        });
+      })
+      .catch((error) => {
+        showAlert({
+          title: "An error occured",
+          message: error.toString(),
+          variant: "danger",
+        });
       });
-    } else {
-      showAlert({
-        title: "An error occured",
-        message: error.toString(),
-        variant: "danger",
-      });
-    }
   };
 
   const createAll = (reposToBecomeProjects) => {
@@ -146,6 +147,7 @@ const Repo = () => {
               : repo;
           })
         );
+
         showAlert({
           title: "Projects created",
           message: `Successfully created ${response.data.length} projects`,
@@ -183,6 +185,7 @@ const Repo = () => {
               : repo;
           })
         );
+
         showAlert({
           title: "Projects deleted",
           message: `Successfully deleted ${response.data.length} projects`,
