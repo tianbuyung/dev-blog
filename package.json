@@ -9,11 +9,11 @@
     "build": "strapi build",
     "strapi": "strapi"
   },
-  "devDependencies": {},
   "dependencies": {
     "@codefusionhub/github-projects-strapi-plugin": "^1.0.1",
     "@strapi/plugin-i18n": "4.12.4",
     "@strapi/plugin-users-permissions": "4.12.4",
+    "@strapi/provider-email-nodemailer": "^4.13.1",
     "@strapi/strapi": "4.12.4",
     "better-sqlite3": "8.0.1",
     "pg": "^8.11.3",
