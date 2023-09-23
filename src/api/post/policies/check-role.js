@@ -5,7 +5,7 @@
  */
 
 module.exports = (policyContext, config, { strapi }) => {
-  console.log(strapi); // accessing strapi object
+  // console.log(strapi); // accessing strapi object
   const { userRole } = config;
   const isEligible =
     policyContext.state.user && policyContext.state.user.role.name === userRole;
