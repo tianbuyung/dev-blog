@@ -24,15 +24,17 @@ const config = {
   },
   tutorials: false,
   theme: {
-    colors: {
-      buttonPrimary600: myPrimaryColor,
-      primary600: myPrimaryColor,
+    light:  {
+      colors: {
+        buttonPrimary600: myPrimaryColor,
+        primary600: myPrimaryColor,
+      },
     },
-  },
+  }
 };
 
 const bootstrap = (app) => {
-  console.log(app);
+  // console.log(app);
 };
 
 export default {

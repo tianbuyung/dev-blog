@@ -9,7 +9,7 @@ const { createCoreService } = require("@strapi/strapi").factories;
 module.exports = createCoreService("api::post.post", ({ strapi }) => ({
   // Method 1: Creating an entirely new custom service
   async exampleService(...args) {
-    console.log("I was called...", args);
+    // console.log("I was called...", args);
     let response = { okay: true };
 
     if (response.okay === false) {
@@ -90,8 +90,8 @@ module.exports = createCoreService("api::post.post", ({ strapi }) => ({
 
   // Method 3: Replacing a core service
   async findOne(entityId, query = {}) {
-    console.log(entityId);
-    console.log(query);
+    // console.log(entityId);
+    // console.log(query);
     return strapi.entityService.findOne(
       "api::post.post",
       entityId,
